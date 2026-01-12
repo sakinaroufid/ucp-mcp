@@ -1,37 +1,24 @@
-# UCP MCP Server
+# ucp-mcp
 
-An MCP (Model Context Protocol) server that exposes the [Universal Commerce Protocol (UCP)](https://github.com/Universal-Commerce-Protocol/ucp) schemas, specifications, and tools for AI agents.
+MCP server for [UCP](https://github.com/Universal-Commerce-Protocol/ucp). Gives your LLM access to all the UCP schemas, specs, and a few handy tools.
 
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+## Why?
 
-## What is UCP?
+UCP (Universal Commerce Protocol) defines how commerce stuff should talk to each other — checkout flows, payments, fulfillment, etc. This MCP server lets you query those definitions, validate payloads against them, and poke around merchant discovery endpoints.
 
-The Universal Commerce Protocol is an open standard enabling interoperability between commerce entities (AI agents, platforms, merchants, PSPs) to facilitate seamless commerce integrations. Learn more at [ucp.dev](https://ucp.dev).
+## Tools
 
-## Features
+- `list_schemas` — browse all 50+ UCP schemas
+- `get_schema` — grab a specific schema by name
+- `validate_json` — check if your JSON matches a schema
+- `get_openapi_spec` — the REST API spec (OpenAPI 3.1)
+- `get_openrpc_spec` — the JSON-RPC spec
+- `list_capabilities` — what UCP can do (checkout, payment, fulfillment, etc)
+- `get_discovery_profile_schema` — the `/.well-known/ucp` schema
+- `discover_merchant` — hit a merchant's discovery endpoint and see what they support
+- `generate_checkout_request` — spit out a sample checkout payload
 
-### Tools
-
-| Tool | Description |
-|------|-------------|
-| `list_schemas` | List all available UCP schemas with titles and descriptions |
-| `get_schema` | Get a specific UCP schema by name |
-| `validate_json` | Validate JSON data against a UCP schema |
-| `get_openapi_spec` | Get the UCP Shopping REST API OpenAPI 3.1 spec |
-| `get_openrpc_spec` | Get the UCP Shopping MCP/JSON-RPC OpenRPC spec |
-| `list_capabilities` | List all UCP capabilities and extensions |
-| `get_discovery_profile_schema` | Get the UCP discovery profile schema |
-| `discover_merchant` | Discover UCP capabilities from a merchant's `/.well-known/ucp` |
-| `generate_checkout_request` | Generate sample checkout request payloads |
-
-### Resources
-
-- **REST OpenAPI Spec** (`ucp://spec/rest-openapi`)
-- **MCP OpenRPC Spec** (`ucp://spec/mcp-openrpc`)
-- **Discovery Profile Schema** (`ucp://spec/discovery-profile`)
-- **All UCP Schemas** (`ucp://schema/{name}`) — 50+ schemas
-
-## Installation
+## Setup
 
 ```bash
 git clone https://github.com/sakinaroufid/ucp-mcp.git
@@ -40,11 +27,9 @@ npm install
 npm run build
 ```
 
-## Usage
+## Add to Cursor / Claude Desktop
 
-### With Claude Desktop
-
-Add to your `claude_desktop_config.json`:
+Drop this in your MCP config:
 
 ```json
 {
@@ -57,121 +42,53 @@ Add to your `claude_desktop_config.json`:
 }
 ```
 
-### With Cursor
+## Quick examples
 
-Add to your Cursor MCP settings:
-
-```json
-{
-  "mcpServers": {
-    "ucp": {
-      "command": "node",
-      "args": ["/path/to/ucp-mcp/dist/index.js"]
-    }
-  }
-}
-```
-
-## Example Usage
-
-### List available schemas
-
+**Find checkout schemas:**
 ```
 list_schemas(category: "checkout")
 ```
 
-Returns:
-```json
-[
-  { "name": "shopping/checkout_resp", "title": "Checkout Response" },
-  { "name": "shopping/checkout.create_req", "title": "Checkout Create Request" },
-  { "name": "shopping/checkout.update_req", "title": "Checkout Update Request" }
-]
-```
-
-### Get checkout response schema
-
-```
-get_schema(name: "shopping/checkout_resp")
-```
-
-### Generate checkout request
-
+**Generate a test checkout:**
 ```
 generate_checkout_request(
   items: [
-    { name: "MacBook Pro", quantity: 1, price_cents: 199900 },
-    { name: "USB-C Cable", quantity: 2, price_cents: 2999 }
+    { name: "Keyboard", quantity: 1, price_cents: 14900 }
   ],
   currency: "USD"
 )
 ```
 
-Returns:
-```json
-{
-  "ucp": {
-    "version": "2026-01-11",
-    "capabilities": ["dev.ucp.shopping.checkout"]
-  },
-  "line_items": [
-    {
-      "id": "item_1",
-      "name": "MacBook Pro",
-      "quantity": 1,
-      "unit_price": { "amount_cents": 199900, "currency": "USD" }
-    },
-    {
-      "id": "item_2", 
-      "name": "USB-C Cable",
-      "quantity": 2,
-      "unit_price": { "amount_cents": 2999, "currency": "USD" }
-    }
-  ],
-  "currency": "USD"
-}
-```
-
-### Discover a merchant's UCP capabilities
-
+**Check what a merchant supports:**
 ```
 discover_merchant(merchant_url: "https://shop.example.com")
 ```
 
-## UCP Capabilities
+## What's in UCP
 
-| Capability | Description |
-|------------|-------------|
-| **Checkout** | Cart management, tax calculation, checkout flows |
-| **Order** | Webhook-based order lifecycle events (shipped, delivered, returned) |
-| **Payment** | Payment handling and token exchange |
-| **Fulfillment** | Shipping options and delivery methods |
+| Thing | What it does |
+|-------|-------------|
+| Checkout | Cart, line items, tax calc |
+| Order | Order events — shipped, delivered, returned |
+| Payment | Payment methods, tokenization |
+| Fulfillment | Shipping options, delivery |
 
-### Extensions
+Plus extensions for discounts, buyer consent, and AP2 mandates.
 
-- **Discount** — Promotional pricing and discounts
-- **Buyer Consent** — Consent management for data collection
-- **AP2 Mandate** — Cryptographic authorization per AP2 protocol
-
-## Development
+## Dev
 
 ```bash
-# Install dependencies
 npm install
-
-# Build
 npm run build
-
-# Run locally
 npm start
 ```
 
-## Related Links
+## Links
 
-- [UCP Specification](https://ucp.dev)
-- [UCP GitHub Repository](https://github.com/Universal-Commerce-Protocol/ucp)
-- [Model Context Protocol](https://modelcontextprotocol.io)
+- [UCP spec](https://ucp.dev)
+- [UCP repo](https://github.com/Universal-Commerce-Protocol/ucp)
+- [MCP docs](https://modelcontextprotocol.io)
 
 ## License
 
-Apache-2.0 (same as UCP)
+Apache-2.0

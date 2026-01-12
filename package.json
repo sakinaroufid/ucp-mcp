@@ -1,7 +1,7 @@
 {
-  "name": "@sakinaroufid/ucp-mcp",
+  "name": "ucp-mcp",
   "version": "1.0.0",
-  "description": "MCP server for Universal Commerce Protocol (UCP) - schemas, validation, and discovery tools for AI agents",
+  "description": "MCP server for UCP (Universal Commerce Protocol)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -20,15 +20,9 @@
   },
   "keywords": [
     "mcp",
-    "model-context-protocol",
     "ucp",
-    "universal-commerce-protocol",
     "commerce",
-    "checkout",
-    "payments",
-    "ai-agents",
-    "claude",
-    "anthropic"
+    "checkout"
   ],
   "author": "sakinaroufid",
   "license": "Apache-2.0",

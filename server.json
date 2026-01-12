@@ -1,61 +1,21 @@
 {
   "name": "ucp-mcp",
-  "display_name": "Universal Commerce Protocol (UCP)",
-  "description": "MCP server exposing UCP schemas, OpenAPI/OpenRPC specs, validation tools, and merchant discovery for AI-powered commerce",
+  "display_name": "UCP",
+  "description": "UCP schemas, specs, and validation tools",
   "version": "1.0.0",
   "author": "sakinaroufid",
   "license": "Apache-2.0",
   "repository": "https://github.com/sakinaroufid/ucp-mcp",
-  "homepage": "https://github.com/sakinaroufid/ucp-mcp",
-  "categories": ["commerce", "api", "validation", "schemas"],
-  "tags": ["ucp", "commerce", "checkout", "payments", "shopping", "ai-agents"],
+  "categories": ["commerce", "api"],
+  "tags": ["ucp", "commerce", "checkout"],
   "tools": [
-    {
-      "name": "list_schemas",
-      "description": "List all available UCP schemas"
-    },
-    {
-      "name": "get_schema",
-      "description": "Get a specific UCP schema by name"
-    },
-    {
-      "name": "validate_json",
-      "description": "Validate JSON against a UCP schema"
-    },
-    {
-      "name": "get_openapi_spec",
-      "description": "Get the UCP REST API OpenAPI 3.1 specification"
-    },
-    {
-      "name": "get_openrpc_spec",
-      "description": "Get the UCP MCP/JSON-RPC OpenRPC specification"
-    },
-    {
-      "name": "list_capabilities",
-      "description": "List UCP capabilities (Checkout, Order, Payment, Fulfillment)"
-    },
-    {
-      "name": "discover_merchant",
-      "description": "Discover UCP capabilities from a merchant's /.well-known/ucp"
-    },
-    {
-      "name": "generate_checkout_request",
-      "description": "Generate sample UCP checkout request payloads"
-    }
-  ],
-  "resources": [
-    {
-      "uri_pattern": "ucp://spec/*",
-      "description": "UCP OpenAPI and OpenRPC specifications"
-    },
-    {
-      "uri_pattern": "ucp://schema/*",
-      "description": "50+ UCP JSON schemas for commerce operations"
-    }
-  ],
-  "installation": {
-    "npm": "npm install -g @sakinaroufid/ucp-mcp",
-    "command": "ucp-mcp"
-  }
+    { "name": "list_schemas", "description": "List UCP schemas" },
+    { "name": "get_schema", "description": "Get a schema by name" },
+    { "name": "validate_json", "description": "Validate JSON against a schema" },
+    { "name": "get_openapi_spec", "description": "REST API spec" },
+    { "name": "get_openrpc_spec", "description": "JSON-RPC spec" },
+    { "name": "list_capabilities", "description": "List capabilities" },
+    { "name": "discover_merchant", "description": "Query merchant discovery endpoint" },
+    { "name": "generate_checkout_request", "description": "Generate sample checkout" }
+  ]
 }
-

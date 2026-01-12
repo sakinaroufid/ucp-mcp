@@ -8,10 +8,10 @@ import {
   ListToolsRequestSchema,
   ReadResourceRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import Ajv from "ajv";
+import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
 
-const AjvInstance = Ajv.default || Ajv;
+const AjvInstance = Ajv2020.default || Ajv2020;
 const addFormatsToAjv = addFormats.default || addFormats;
 import * as fs from "fs";
 import * as path from "path";
@@ -22,8 +22,12 @@ const __dirname = path.dirname(__filename);
 const SPEC_DIR = path.join(__dirname, "..", "spec");
 const SOURCE_DIR = path.join(__dirname, "..", "source");
 
-// Initialize AJV for JSON Schema validation
-const ajv = new AjvInstance({ allErrors: true, strict: false });
+// Initialize AJV for JSON Schema 2020-12 validation
+const ajv = new AjvInstance({ 
+  allErrors: true, 
+  strict: false,
+  validateSchema: false,  // Skip meta-schema validation
+});
 addFormatsToAjv(ajv);
 
 // Schema cache
@@ -114,6 +118,29 @@ function listSchemas(): { name: string; title?: string; description?: string }[]
 }
 
 /**
+ * Strip $ref, $id, $schema from schema for standalone validation
+ */
+function stripRefs(obj: unknown): unknown {
+  if (obj === null || typeof obj !== "object") return obj;
+  if (Array.isArray(obj)) return obj.map(stripRefs);
+  
+  const record = obj as Record<string, unknown>;
+  
+  // If object is just a $ref, replace with permissive schema
+  if ("$ref" in record) {
+    return { type: ["object", "array", "string", "number", "boolean", "null"] };
+  }
+  
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(record)) {
+    // Skip meta fields that cause resolution issues
+    if (key === "$schema" || key === "$id") continue;
+    result[key] = stripRefs(value);
+  }
+  return result;
+}
+
+/**
  * Validate JSON against a schema
  */
 function validateJson(schemaName: string, data: unknown): { valid: boolean; errors?: string[] } {
@@ -123,7 +150,9 @@ function validateJson(schemaName: string, data: unknown): { valid: boolean; erro
   }
   
   try {
-    const validate = ajv.compile(schema);
+    // Strip $refs for standalone validation
+    const strippedSchema = stripRefs(schema) as object;
+    const validate = ajv.compile(strippedSchema);
     const valid = validate(data);
     
     if (!valid && validate.errors) {
